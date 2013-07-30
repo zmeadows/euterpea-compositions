@@ -143,7 +143,6 @@ s2Flute = section (Fs,3) 0
       0.2
       [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
 
-
 s2Bass :: Section
 s2Bass = section (Fs,3) 0
       [(0.6,Fs),(0.5,B),(0.1,D),(0.05,A),(0.4,Cs),(0.6,E)]
@@ -171,6 +170,15 @@ s3Flute = section (G,3) 0
       0.1
       [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
 
+s3Bass :: Section
+s3Bass = section (G,3) 0
+      [(0.6,Gs),(0.5,Bs),(0.1,Cs),(0.05,Es),(0.4,Ds),(0.6,As),(0.3,Fs)]
+      [(0.8,4),(0.4,5),(0.9,6)]
+      [(0.1,hn),(0.6,qn),(0.4,en),(0.3,sn)]
+      [(1.0,100),(1.0,50)]
+      0.1
+      [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
+
 s4Guitar :: Section
 s4Guitar = section (Gs,3) 0.15
       [(0.6,Gs),(0.5,C),(0.1,Fs),(0.05,G),(0.4,B),(0.6,E)]
@@ -182,6 +190,15 @@ s4Guitar = section (Gs,3) 0.15
 
 s4Flute :: Section
 s4Flute = section (Gs,3) 0
+      [(0.6,Gs),(0.5,C),(0.1,Fs),(0.05,G),(0.4,B),(0.6,E)]
+      [(0.8,4),(0.4,5),(0.9,6)]
+      [(0.1,hn),(0.6,qn),(0.4,en),(0.3,sn)]
+      [(1.0,100),(1.0,50)]
+      0.2
+      [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
+
+s4Bass :: Section
+s4Bass = section (Gs,3) 0
       [(0.6,Gs),(0.5,C),(0.1,Fs),(0.05,G),(0.4,B),(0.6,E)]
       [(0.8,4),(0.4,5),(0.9,6)]
       [(0.1,hn),(0.6,qn),(0.4,en),(0.3,sn)]
@@ -209,9 +226,20 @@ fluteTrack = Track (rest 0) (fromList
                     , (s4Flute,2*wn)
                     ]) 0 (12*wn)
 
+bassTrack :: Track
+bassTrack = Track (rest 0) (fromList
+                    [ (s1Bass,2*wn)
+                    , (s2Bass,2*wn)
+                    , (s1Bass,2*wn)
+                    , (s2Bass,2*wn)
+                    , (s3Bass,2*wn)
+                    , (s4Bass,2*wn)
+                    ]) 0 (12*wn)
+
 evolveInstruments :: IO (Music (Pitch, Volume))
 evolveInstruments = do
     gt <- instrument AcousticGuitarSteel <$> (music . snd) <$> runStateT evolve guitarTrack
     ft <- instrument Oboe <$> (music . snd) <$> runStateT evolve fluteTrack
-    return $ tempo (3/5) $ gt :=: ft
+    bt <- instrument Bassoon <$> (music . snd) <$> runStateT evolve bassTrack
+    return $ tempo (3/5) $ gt :=: ft :=: bt
 
