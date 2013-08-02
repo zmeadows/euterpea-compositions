@@ -75,9 +75,10 @@ updateMusic n = do
     p <- gets progression
     td <- gets totalDuration
 
-    put $ if elap >= secDur
-                then Track (m :+: n) (right p) 0 td
-                else Track (m :+: n) p (elap + dur n) td
+    let nelap = elap + dur n
+    put $ if nelap >= secDur
+                then Track (m :+: n) (right p) (nelap - secDur) td
+                else Track (m :+: n) p nelap td
 
 evolve :: StateT Track IO ()
 evolve = do
@@ -102,35 +103,35 @@ silentSection :: Section
 silentSection = section (A,4) 0 [(1.0,A)] [(1.0,4)] [(1.0,wn)] [(1.0,0)] 1 [(1.0,wn)]
 
 s1Guitar :: Section
-s1Guitar = section (F,3) 0.4
+s1Guitar = section (F,3) 0.1
       [(0.5,F),(1.0,Bf),(1.0,D),(1.0,A),(1.0,C),(1.0,E)]
       [(1.0,4),(0.4,5)]
       [(0.5,hn),(0.7,qn),(0.7,en),(0.2,sn)]
       [(0.5,127),(0.3,100),(0.2,75),(0.1,50),(0.05,25)]
       0.1
-      [(0.9,en)]
+      [(0.2,qn),(0.9,en),(0.5,sn)]
 
 s1Flute :: Section
 s1Flute = section (F,3) 0
-      [(0.6,F),(0.1,Bf),(0.4,D),(0.6,A),(0.3,C),(1.0,E)]
-      [(0.5,5),(0.7,6),(0.35,7)]
-      [(0.2,wn),(0.4,hn),(0.6,qn),(0.3,en),(0.2,sn),(10.0,tn)]
+      [(0.2,F),(0.3,Bf),(0.4,D),(0.6,A),(0.3,C),(0.5,E)]
+      [(0.5,5),(0.7,6),(0.15,7)]
+      [(0.2,wn),(0.4,hn),(0.6,qn),(0.3,en),(0.2,sn),(6.5,tn)]
       [(0.2,127),(1.0,100),(1.0,75),(0.3,50),(0.1,25)]
       0.05
       [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
 
 s1Bass :: Section
-s1Bass = section (F,3) 0
+s1Bass = section (F,3) 0.2
       [(0.6,F),(0.1,Bf),(0.4,D),(0.6,A),(0.3,C),(1.0,E)]
-      [(0.4,3),(0.5,4),(0.1,5)]
-      [(0.2,wn),(0.4,hn),(0.6,qn),(0.3,en),(0.2,sn)]
-      [(1.0,127),(1.0,100),(0.5,75),(0.3,50),(0.1,25)]
-      0.2
-      [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
+      [(0.05,2),(0.4,3),(0.1,4)]
+      [(0.4,wn),(0.6,hn),(0.2,qn),(0.05,en)]
+      [(1.0,127),(1.0,100),(0.5,75),(0.1,50),(0.05,25)]
+      0.15
+      [(0.1,hn),(0.5,qn),(0.4,en),(0.05,sn)]
 
 s2Guitar :: Section
-s2Guitar = section (Fs,3) 0.30
-      [(0.6,Fs),(0.5,B),(0.1,D),(0.05,A),(0.4,Cs),(0.6,E)]
+s2Guitar = section (Fs,3) 0.1
+      [(0.5,Fs),(1.0,B),(1.0,D),(1.0,A),(1.0,Cs),(1.0,E)]
       [(0.2,3),(0.3,4),(0.1,5)]
       [(0.1,hn),(0.6,qn),(0.4,en),(0.8,sn)]
       [(1.0,100),(1.0,50)]
@@ -147,9 +148,9 @@ s2Flute = section (Fs,3) 0
       [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
 
 s2Bass :: Section
-s2Bass = section (Fs,3) 0
+s2Bass = section (Fs,3) 0.1
       [(0.6,Fs),(0.5,B),(0.1,D),(0.05,A),(0.4,Cs),(0.6,E)]
-      [(0.8,4),(0.4,5),(0.9,6)]
+      [(0.05,2),(0.4,3),(0.5,4)]
       [(0.1,hn),(0.6,qn),(0.4,en),(0.8,sn)]
       [(1.0,100),(1.0,50)]
       0.2
@@ -211,11 +212,29 @@ s4Bass = section (Gs,3) 0
 
 s5Guitar :: Section
 s5Guitar = section (A,3) 0.15
-      [(0.6,A),(0.5,E),(0.1,Cs),(0.05,B)]
+      [(0.5,A),(1.0,E),(1.0,Cs),(1.0,B)]
       [(0.2,3),(0.3,4),(0.1,5)]
       [(0.1,hn),(0.6,qn),(0.4,en),(0.3,sn)]
       [(1.0,100),(1.0,50)]
       0.1
+      [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
+
+s5Flute :: Section
+s5Flute = section (A,3) 0
+      [(0.5,A),(0.5,B),(0.5,Cs),(0.0,D),(0.5,E),(0.0,Fs),(0.0,Gs)]
+      [(0.1,4),(0.4,5),(0.9,6)]
+      [(0.1,hn),(0.6,qn),(0.4,en),(0.3,sn),(10.0,tn)]
+      [(1.0,100)]
+      0.2
+      [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
+
+s5Bass :: Section
+s5Bass = section (A,2) 0.4
+      [(0.5,A),(1.0,E),(1.0,Cs),(1.0,B)]
+      [(0.8,4),(0.4,5),(0.9,6)]
+      [(0.1,hn),(0.6,qn),(0.4,en),(0.3,sn)]
+      [(1.0,100),(1.0,50)]
+      0.2
       [(0.1,hn),(0.25,qn),(0.4,en),(0.3,sn)]
 
 guitarTrack :: Track
@@ -231,13 +250,14 @@ guitarTrack = Track (rest 0) (fromList
 
 fluteTrack :: Track
 fluteTrack = Track (rest 0) (fromList
-                    [ (silentSection,2*wn)
-                    , (s2Flute,2*wn)
-                    , (s1Flute,2*wn)
-                    , (s2Flute,2*wn)
-                    , (s3Flute,2*wn)
-                    , (s4Flute,2*wn)
-                    ]) 0 (12*wn)
+                     [ (silentSection,2*wn)
+                     , (s2Flute,2*wn)
+                     , (s1Flute,2*wn)
+                     , (s2Flute,2*wn)
+                     , (s3Flute,2*wn)
+                     , (s4Flute,2*wn)
+                     , (s5Flute,2*wn)
+                    ]) 0 (14*wn)
 
 bassTrack :: Track
 bassTrack = Track (rest 0) (fromList
@@ -247,12 +267,15 @@ bassTrack = Track (rest 0) (fromList
                     , (s2Bass,2*wn)
                     , (s3Bass,2*wn)
                     , (s4Bass,2*wn)
-                    ]) 0 (12*wn)
+                    , (s5Bass,2*wn)
+                    ]) 0 (14*wn)
 
 evolveInstruments :: IO (Music (Pitch, Volume))
 evolveInstruments = do
     gt <- instrument OrchestralHarp <$> (music . snd) <$> runStateT evolve guitarTrack
     ft <- instrument OrchestralHarp <$> (music . snd) <$> runStateT evolve fluteTrack
     bt <- instrument OrchestralHarp <$> (music . snd) <$> runStateT evolve bassTrack
-    return $ tempo (4/7) $ gt :=: ft :=: bt
+    return $ tempo (3/7) $ gt :=: ft :=: bt
 
+apotheosis :: IO ()
+apotheosis = evolveInstruments >>= play
